@@ -1,0 +1,11 @@
+{
+  "name": "article-tuwen",
+  "description": "One-shot pipeline: raw material → 4000-word article → 5-9 social cards + text summary",
+  "version": "1.0.0",
+  "author": {"name": "EdwardWason"},
+  "homepage": "https://github.com/EdwardWason/article-tuwen",
+  "repository": "https://github.com/EdwardWason/article-tuwen",
+  "license": "MIT-0",
+  "keywords": ["article", "social-cards", "xiaohongshu", "weixin", "image-generation"],
+  "skills": ["./"]
+}
