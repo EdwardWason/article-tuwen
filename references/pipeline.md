@@ -4,21 +4,30 @@
 
 ---
 
-## Phase 1: 素材摄入 & 长文撰写
+## Phase 1: 素材摄入 & 长文撰写（调用transcript-crafter）
 
-### 1.1 素材获取
-- URL → WebFetch抓取全文
-- 文件路径 → Read读取
-- 粘贴文本 → 直接使用
-- 多素材按顺序阅读，合并信息
+### 1.0 判断是否需要转写
+- 用户说"转写成图文"（含"转写"）→ 需要Phase 1，调用transcript-crafter
+- 用户说"转换成图文"且提供了已有MD文件 → 跳过Phase 1，直接进入Phase 2
+- 用户说"不用转写" → 跳过Phase 1
 
-### 1.2 长文撰写
-- 字数：3500-4500字
-- 结构：标题(含核心关键词) → 导语 → 4-6章节 → 结语
-- 标题必须包含素材核心产品/技术名
-- 每章必须有具体数据、原话引述、技术细节
-- 保留原文「」原话和数据
-- 保存为 `<slug>-article.md`
+### 1.1 调用transcript-crafter（必须完整8步）
+- 技能路径: C:\Users\Administrator\Documents\trae_projects\.trae\skills\transcript-crafter\
+- 传入"全自动"参数，跳过transcript-crafter的3个确认点
+- 执行完整流程：
+  1. 输入获取+预处理
+  2. 10维度提取→素材稿（认知层/传播层/情绪层/实操层）
+  3. 行业适配+人设选择
+  4. 框架生成
+  5. **5工具搜索补充+事实核查**（关键！这是增量信息的来源）
+  6. 文章撰写+内容审核
+  7. 质量验证+交付
+  8. 桌面保存
+- 产出: `<slug>-article.md`（2500-4000字，增量密度≥70%）
+- 关键要求：
+  - 每段必须有实录外增量（背景/数据/对比/注释），增量信息标注来源
+  - 观点必须归属发言者，Agent自身分析与实录观点明确区分
+  - 5工具搜索补充确保零空缺，搜不到用[AI推断]标记
 
 ---
 
@@ -68,8 +77,11 @@
 - 图片：无broken image
 - 节奏：暗色页不相邻，版式不重复
 
-### 3.5 截图（关键步骤！）
-1. **杀掉所有python进程**：`Get-Process python -ErrorAction SilentlyContinue | Stop-Process -Force`
+### 3.5 截图（安全步骤）
+1. **清理8090端口**：仅终止占用8090端口的进程，禁止杀全部Python进程
+   - 用 `Get-NetTCPConnection -LocalPort 8090` 查找端口占用进程的 OwningProcess
+   - 对该进程ID执行 `Stop-Process -Id <pid>`（定向终止，不加 -Force 避免强制关闭其他工作）
+   - 进程可能已退出，需用 try/catch 捕获异常
 2. **cd到当前项目目录**
 3. 启动HTTP服务器：`python -m http.server 8090`
 4. 等待3秒
@@ -85,14 +97,18 @@
 
 ## Phase 4: 交付 & 记录
 
-### 4.1 本地交付
+### 4.1 本地交付（自动执行）
 - `Start-Process xcopy` 复制到 `C:\Users\Administrator\Desktop\<slug>公众号配图\`
-- `explorer.exe` 打开文件夹
+- 不自动打开explorer.exe，告知用户输出路径即可
 
-### 4.2 飞书云盘
-- `lark-cli drive +create-folder --name "<slug>公众号配图"`
-- cd到output目录后逐个上传（lark-cli要求相对路径）
-- 返回飞书URL
+### 4.2 飞书云盘（需用户确认）
+- **确认门**：执行前必须询问用户"是否同步到飞书云盘？"
+- 用户同意后执行：
+  - `lark-cli drive +create-folder --name "<slug>公众号配图"`
+  - cd到output目录后逐个上传（lark-cli要求相对路径）
+  - 返回飞书URL
+- 用户拒绝则跳过，仅本地交付
+- **隐私提醒**：如果素材包含敏感/机密内容，应在询问时额外提醒风险
 
 ### 4.3 更新history.json
 - 追加本次运行记录
@@ -111,4 +127,5 @@
 | 桌面路径权限 | 用Start-Process xcopy绕行 |
 | 飞书token过期 | 重新创建文件夹 |
 | history.json损坏 | 从空状态开始 |
-| 截图内容错误 | 杀进程→确认目录→重启服务器→重截图 |
+| 截图内容错误 | 清理8090端口→确认目录→重启服务器→重截图 |
+| 8090端口被占用 | 清理端口后重试，不杀其他Python进程 |
