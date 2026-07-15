@@ -1,6 +1,6 @@
 ---
 name: "article-tuwen"
-version: "1.1.1"
+version: "1.1.2"
 slug: "article-tuwen"
 displayName: "Article Tuwen"
 summary: "素材转图文一条龙：URL/文件/文本 → 长文 + 5-9张社交卡片 + 文字稿"
@@ -18,8 +18,7 @@ description: "One-shot pipeline: raw material → 4000-word article (with web se
 触发本技能后，以下操作会自动执行：
 - **网络请求**：WebFetch抓取URL素材；WebSearch搜索补充信息进行事实核查；从图片源下载封面/封底图片
 - **本地文件创建**：在桌面创建输出文件夹，写入PNG图片、MD文章、TXT文字稿
-- **本地HTTP服务器**：截图阶段在8090端口启动临时HTTP服务器，截图完成后关闭
-- **端口清理**：截图前清理8090端口占用进程（仅限该端口）
+- **子技能调用**：调用transcript-crafter（长文撰写）和xhs-crafter（排版截图），子技能的具体行为见各自技能声明
 
 以下操作需要用户确认：
 - **云上传**：飞书云盘同步是可选步骤，执行前必须征得用户明确同意。如果素材包含敏感/机密信息，应提醒云上传风险
@@ -32,7 +31,7 @@ description: "One-shot pipeline: raw material → 4000-word article (with web se
 | 网络访问 | ✅ | WebFetch抓取URL素材；WebSearch搜索补充信息；下载封面/封底图片；用户确认后上传飞书云盘 |
 | 文件读写 | ✅ | 读取用户提供的文件；写入桌面输出目录和项目临时目录 |
 | 环境变量 | ❌ | 不读取任何环境变量 |
-| subprocess | ✅ | python http.server(8090)、node screenshot.js、lark-cli(可选) |
+| subprocess | ✅ | 调用xhs-crafter执行截图、lark-cli上传飞书（可选） |
 | 外部 API | ✅ | lark-cli飞书API（可选，需用户确认） |
 
 ## 架构：编排层，非执行层
@@ -84,7 +83,7 @@ article-tuwen（编排层）
 2. **调用transcript-crafter**：Phase 1必须调用transcript-crafter技能的完整8步流程（10维度提取+5工具搜索补充+事实核查），禁止用简化版内嵌逻辑替代。产出文章增量密度必须≥70%
 3. **用户已有转写稿时跳过Phase 1**：如果用户说"不用转写"或提供了已有的转写稿MD文件，直接进入Phase 2-4
 4. **多样性轮换**：每次运行读取`history.json`，封面搜索词/封底搜索词/主题色/布局序列必须与最近3次不同。8封面词+8封底词+5主题池，按序轮换
-5. **截图安全**：截图前仅清理8090端口占用进程（禁止杀全部Python进程），确认HTTP服务器指向当前项目目录，截图后验证文件大小与上次不同
+5. **截图**：调用xhs-crafter执行HTML截图，截图后验证文件大小与上次不同
 6. **字号铁律**：正文≥32px，辅助≥28px，元信息≥24px。禁止inline font-size覆盖。所有内页标题统一.h-md(52px)
 7. **密度铁律**：活跃构图≥78%画布高度。填不满时追加callout/数据行/注释行。Pull Quote页禁止justify-content:center
 

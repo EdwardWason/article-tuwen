@@ -15,8 +15,7 @@ Article Tuwen is a content-to-cards pipeline: feed it URLs, files, or text, and 
 When this skill is triggered, the following operations execute automatically:
 - **Network requests**: WebFetch to retrieve URL materials; WebSearch for fact-checking enrichment; download cover/back-cover images from image sources
 - **Local file creation**: Creates output folder on Desktop, writes PNG images, MD article, TXT summary
-- **Local HTTP server**: Starts a temporary HTTP server on port 8090 during screenshot phase, closed after completion
-- **Port cleanup**: Clears processes occupying port 8090 before screenshots (this port only)
+- **Sub-skill invocation**: Calls transcript-crafter (article writing) and xhs-crafter (layout + screenshot); sub-skill behaviors are declared in their respective skill declarations
 
 The following operations require user confirmation:
 - **Cloud sync**: Feishu cloud disk sync is optional and requires explicit user consent before execution
@@ -56,7 +55,7 @@ Feishu cloud sync is optional, requires user confirmation.
 
 - **Local zero-confirmation, cloud upload requires consent**: Phase 1-3 fully automatic, Phase 4 cloud upload asks first
 - **Diversity rotation**: 8 cover keywords + 8 closing keywords + 5 theme pools, no repeats between runs
-- **Screenshot safety**: Only clears port 8090, does not kill other Python processes
+- **Screenshot safety**: Calls xhs-crafter for screenshots, does not directly manage processes or ports
 - **Font size rules**: Body≥32px, auxiliary≥28px, meta≥24px
 - **Density rules**: Active composition ≥78% canvas height
 
@@ -68,6 +67,7 @@ Feishu cloud sync is optional, requires user confirmation.
 
 ## Changelog
 
-- v1.1.1 — Disclosure fixes: description adds web search declaration, expanded data handling statement, removed bypass language, CN-EN sync
+- v1.1.2 — Orchestration boundary: removed sub-skill implementation details, removed bypass language, sub-skill declarations replace specific commands
+- v1.1.1 — Disclosure fixes: description adds web search declaration, expanded data handling, removed bypass language, CN-EN sync
 - v1.1.0 — Security audit fixes: targeted port cleanup, cloud upload consent gate, privacy declaration, trigger boundaries
 - v1.0.0 — Initial release

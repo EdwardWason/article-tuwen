@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.2 — 2026-07-15
+
+### Orchestration Boundary Fix (ClawHub SkillSpector Round 3)
+
+- **移除子技能实现细节**：pipeline.md不再文档化xhs-crafter的截图实现（端口清理、HTTP服务器），改为"调用xhs-crafter执行截图"
+- **移除bypass语言**：异常表中"外部进程复制绕行方法"的描述改为中性的"使用替代复制方法"
+- **移除端口条目**：异常表移除"8090端口被占用"条目，截图异常改为"重新调用xhs-crafter截图"
+- **SKILL.md数据处理声明**：移除"本地HTTP服务器"和"端口清理"，改为"子技能调用"声明
+- **SKILL.md权限声明**：subprocess从具体命令改为"调用xhs-crafter执行截图"
+- **SKILL.md规则5**：从"截图安全（端口清理）"改为"调用xhs-crafter执行截图"
+- **桌面交付**：移除"（自动执行）"标注，强化写入提示
+
 ## v1.1.1 — 2026-07-15
 
 ### Disclosure Fixes (ClawHub SkillSpector Round 2)
