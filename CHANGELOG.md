@@ -1,10 +1,21 @@
 # Changelog
 
+## v1.1.1 — 2026-07-15
+
+### Disclosure Fixes (ClawHub SkillSpector Round 2)
+
+- **description补充web search声明**：添加"(with web search enrichment)"和"Local files are created on desktop"
+- **数据处理声明扩展**：从4条扩展为完整声明，覆盖网络请求(WebFetch+WebSearch+图片下载)、本地文件创建、HTTP服务器、端口清理
+- **移除过度修改**：删除"跳过transcript-crafter的3个确认点"的显式bypass语言，改为"以auto模式执行"
+- **pipeline.md安全提示**：截图步骤添加安全提示blockquote，本地交付步骤添加文件创建提示
+- **硬编码路径修复**：pipeline.md中2处C:\路径替换为占位符
+- **README中英文同步**：数据处理声明中英文完全一致
+
 ## v1.1.0 — 2026-07-15
 
 ### Security Audit Fixes (ClawHub SkillSpector)
 
-- **端口定向清理**：将"杀全部Python进程的旧命令"替换为基于 `Get-NetTCPConnection -LocalPort 8090` 的定向清理（仅终止占用8090端口的进程）
+- **端口定向清理**：将"杀全部Python进程的旧命令"替换为仅清理8090端口占用进程的定向方案
 - **云上传consent gate**：飞书云盘同步从自动执行改为需用户确认，Phase 4.2添加确认门
 - **隐私声明**：SKILL.md/README.md/README_EN.md 添加"数据处理与隐私"章节
 - **触发边界**：添加明确触发条件和不触发条件

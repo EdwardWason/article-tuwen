@@ -1,11 +1,11 @@
 ---
 name: "article-tuwen"
-version: "1.1.0"
+version: "1.1.1"
 slug: "article-tuwen"
 displayName: "Article Tuwen"
 summary: "素材转图文一条龙：URL/文件/文本 → 长文 + 5-9张社交卡片 + 文字稿"
 license: "MIT-0"
-description: "One-shot pipeline: raw material → 4000-word article → 5-9 social cards + text summary. Invoke when user says '转写成图文' or '转换成图文' with URLs/files/text. Cloud sync is opt-in only. Do NOT use for original writing, video, or plain-text formatting."
+description: "One-shot pipeline: raw material → 4000-word article (with web search enrichment) → 5-9 social cards + text summary. Invoke when user says '转写成图文' or '转换成图文' with URLs/files/text. Local files are created on desktop. Cloud sync is opt-in only. Do NOT use for original writing, video, or plain-text formatting."
 ---
 
 # Article Tuwen — 素材转图文一条龙
@@ -15,16 +15,21 @@ description: "One-shot pipeline: raw material → 4000-word article → 5-9 soci
 
 ## 数据处理声明
 
-- **本地处理优先**：所有素材获取、长文撰写、排版渲染、截图均在本地完成
-- **云上传需确认**：飞书云盘同步是可选步骤，执行前必须征得用户明确同意
-- **敏感内容警告**：如果用户提供的URL/文件/文本包含敏感或机密信息，应提醒用户云上传风险
+触发本技能后，以下操作会自动执行：
+- **网络请求**：WebFetch抓取URL素材；WebSearch搜索补充信息进行事实核查；从图片源下载封面/封底图片
+- **本地文件创建**：在桌面创建输出文件夹，写入PNG图片、MD文章、TXT文字稿
+- **本地HTTP服务器**：截图阶段在8090端口启动临时HTTP服务器，截图完成后关闭
+- **端口清理**：截图前清理8090端口占用进程（仅限该端口）
+
+以下操作需要用户确认：
+- **云上传**：飞书云盘同步是可选步骤，执行前必须征得用户明确同意。如果素材包含敏感/机密信息，应提醒云上传风险
 - **不传输原始素材**：飞书云盘仅上传生成的PNG和文字稿，不上传原始素材文件
 
 ## 权限声明
 
 | 能力类别 | 是否使用 | 说明 |
 |---------|---------|------|
-| 网络访问 | ✅ | WebFetch抓取URL素材；用户确认后上传飞书云盘 |
+| 网络访问 | ✅ | WebFetch抓取URL素材；WebSearch搜索补充信息；下载封面/封底图片；用户确认后上传飞书云盘 |
 | 文件读写 | ✅ | 读取用户提供的文件；写入桌面输出目录和项目临时目录 |
 | 环境变量 | ❌ | 不读取任何环境变量 |
 | subprocess | ✅ | python http.server(8090)、node screenshot.js、lark-cli(可选) |

@@ -12,8 +12,14 @@ Article Tuwen is a content-to-cards pipeline: feed it URLs, files, or text, and 
 
 ## Data Handling & Privacy
 
-- **Local-first**: All material fetching, article writing, layout rendering, and screenshotting happen locally
-- **Cloud sync is opt-in**: Feishu cloud disk sync is optional and requires explicit user consent before execution
+When this skill is triggered, the following operations execute automatically:
+- **Network requests**: WebFetch to retrieve URL materials; WebSearch for fact-checking enrichment; download cover/back-cover images from image sources
+- **Local file creation**: Creates output folder on Desktop, writes PNG images, MD article, TXT summary
+- **Local HTTP server**: Starts a temporary HTTP server on port 8090 during screenshot phase, closed after completion
+- **Port cleanup**: Clears processes occupying port 8090 before screenshots (this port only)
+
+The following operations require user confirmation:
+- **Cloud sync**: Feishu cloud disk sync is optional and requires explicit user consent before execution
 - **Sensitive content warning**: If materials contain sensitive or confidential information, cloud upload risks will be highlighted
 - **No raw material transmission**: Only generated PNGs and text summaries are uploaded to Feishu, never raw source materials
 
@@ -62,5 +68,6 @@ Feishu cloud sync is optional, requires user confirmation.
 
 ## Changelog
 
+- v1.1.1 — Disclosure fixes: description adds web search declaration, expanded data handling statement, removed bypass language, CN-EN sync
 - v1.1.0 — Security audit fixes: targeted port cleanup, cloud upload consent gate, privacy declaration, trigger boundaries
 - v1.0.0 — Initial release
